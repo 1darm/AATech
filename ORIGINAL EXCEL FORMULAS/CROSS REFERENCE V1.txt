@@ -1,0 +1,42 @@
+Sub CompareMacro()
+'
+' CompareMacro Macro
+' Cross referencing
+'
+' Keyboard Shortcut: Ctrl+p
+'Cell(row , col)
+
+Dim currentRow As Integer
+Dim currentCompareRow As Integer
+Dim currentSearchFor As String
+Dim currentCol As Integer
+
+currentCol = 3
+currentCompareRow = 2
+currentRow = 2
+
+While Not (IsEmpty(Worksheets("COMPARE").Cells(currentCompareRow, 1)))
+    currentSearchFor = Worksheets("COMPARE").Cells(currentCompareRow, 1)
+    currentRow = 2
+    While Not (IsEmpty(Worksheets("PART LIST").Cells(currentRow, 1)))
+        For x = 3 To 9
+            If (Worksheets("PART LIST").Cells(currentRow, x) = currentSearchFor) Then
+                Worksheets("COMPARE").Cells(currentCompareRow, x - 1) = Worksheets("PART LIST").Cells(currentRow, 1)
+            End If
+        Next x
+        Debug.Print
+        currentRow = currentRow + 1
+    Wend
+    currentCompareRow = currentCompareRow + 1
+Wend
+
+currentCompareRow = 2
+While Not (IsEmpty(Worksheets("COMPARE").Cells(currentCompareRow, 1)))
+    For x = 1 To 8
+        If (IsEmpty(Worksheets("COMPARE").Cells(currentCompareRow, x))) Then
+            Worksheets("COMPARE").Cells(currentCompareRow, x) = "N/A"
+        End If
+    Next x
+    currentCompareRow = currentCompareRow + 1
+Wend
+End Sub

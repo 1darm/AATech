@@ -1,0 +1,72 @@
+
+Option Compare Text
+
+Sub Macro1()
+Application.ScreenUpdating = False
+Application.Calculation = xlManual
+Application.DisplayStatusBar = False
+Application.EnableEvents = False
+
+Dim num, numTwo As Long
+Dim maxRow As Long
+Dim data_array(1 To 13) As Object
+Dim coll, redColl As Collection
+
+Set data_array(1) = Sheets("Capacitors")
+Set data_array(2) = Sheets("Resistors")
+Set data_array(3) = Sheets("Diodes")
+Set data_array(4) = Sheets("ICs")
+Set data_array(5) = Sheets("Transistors & MOSFET")
+Set data_array(6) = Sheets("Inductors")
+Set data_array(7) = Sheets("LEDs")
+Set data_array(8) = Sheets("Varistors")
+Set data_array(9) = Sheets("Mechanical")
+Set data_array(10) = Sheets("Connectors")
+Set data_array(11) = Sheets("Crystals")
+Set data_array(12) = Sheets("Wires")
+Set data_array(13) = Sheets("Misc")
+
+maxRow = Sheets("SEARCH").UsedRange.Rows.count
+
+For x = 2 To maxRow
+    Set coll = New Collection
+    Set redColl = New Collection
+    For y = 1 To 13
+        For a = 6 To data_array(y).UsedRange.Rows.count
+            If (Sheets("SEARCH").Cells(x, 1) = data_array(y).Cells(a, 3) And Sheets("SEARCH").Cells(x, 2) = data_array(y).Cells(a, 4)) Then
+                coll.Add data_array(y).Cells(a, 7)
+                coll.Add data_array(y).Cells(a, 8)
+                num = a + 1
+                While (IsEmpty(data_array(y).Cells(num, 3)))
+                    coll.Add data_array(y).Cells(num, 7)
+                    coll.Add data_array(y).Cells(num, 8)
+                    num = num + 1
+                Wend
+            ElseIf (Sheets("SEARCH").Cells(x, 1) = data_array(y).Cells(a, 3)) And (InStr(data_array(y).Cells(a, 4).Value, Sheets("SEARCH").Cells(x, 2).Value) > 0 Or InStr(Sheets("SEARCH").Cells(x, 2).Value, data_array(y).Cells(a, 4).Value) > 0) Then
+            'nd (InStr(Sheets("SEARCH").Cells(x, 2).Value, data_array(y).Cells(a, 4).Value) > 0) Or (InStr(data_array(y).Cells(a, 4).Value, Sheets("SEARCH").Cells(x, 2).Value) > 0)) Then
+                Debug.Print Sheets("SEARCH").Cells(x, 1) + " = " + data_array(y).Cells(a, 3) + " " + data_array(y).Cells(a, 4).Value; " = " + Sheets("SEARCH").Cells(x, 2).Value
+                coll.Add data_array(y).Cells(a, 7)
+                coll.Add data_array(y).Cells(a, 8)
+                'redColl.Add data_array(y).Cells(a, 7)
+                'redColl.Add data_array(y).Cells(a, 8)
+                numTwo = a + 1
+                While (IsEmpty(data_array(y).Cells(numTwo, 3)))
+                    coll.Add data_array(y).Cells(numTwo, 7)
+                    coll.Add data_array(y).Cells(numTwo, 8)
+                    numTwo = numTwo + 1
+                Wend
+            End If
+        Next a
+    Next y
+    For b = 4 To coll.count + 3
+        Sheets("SEARCH").Cells(x, b) = coll(b - 3)
+    Next b
+Next x
+
+Application.EnableEvents = True
+Application.DisplayStatusBar = True
+Application.Calculation = xlAutomatic
+Application.ScreenUpdating = True
+End Sub
+ 
+

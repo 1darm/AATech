@@ -1,0 +1,44 @@
+Dim currentRow As Long
+Dim currentSearch As String
+Dim compareCount, arrCount As Long
+Dim columnCount, compareColumnCount As Variant
+Dim partListCount As Variant
+
+partListCount = Worksheets("PART LIST").UsedRange.Value
+columnCount = Worksheets("PART LIST").UsedRange.Columns.Count
+compareColumnCount = Worksheets("COMPARE").UsedRange.Columns.Count
+compareCount = 0
+arrCount = 0
+currentRow = 2
+
+For x = 1 To columnCount
+    If InStr(Worksheets("PART LIST").Cells(1, x).Value, "modelno") Then
+        compareCount = compareCount + 1
+    End If
+Next x
+
+ReDim arr(1 To compareCount) As Variant
+ReDim arr2(1 To compareCount) As Variant
+
+For y = 1 To columnCount
+    If InStr(Worksheets("PART LIST").Cells(1, y).Value, "modelno") Then
+        arrCount = arrCount + 1
+        arr(arrCount) = y
+        arr2(arrCount) = Worksheets("PART LIST").Cells(1, y).Value
+    End If
+Next y
+
+While (Not (IsEmpty(Worksheets("COMPARE").Cells(currentRow, 1))))
+    For b = 1 To compareCount
+        For c = 1 To UBound(partListCount)
+            If (partListCount(c, arr(b)) = Worksheets("COMPARE").Cells(currentRow, 1).Value) Then
+                For d = 1 To compareColumnCount
+                    If (Worksheets("COMPARE").Cells(1, d) = arr2(b)) Then
+                        Worksheets("COMPARE").Cells(currentRow, d) = partListCount(c, 1)
+                    End If
+                Next d
+            End If
+        Next c
+    Next b
+    currentRow = currentRow + 1
+Wend

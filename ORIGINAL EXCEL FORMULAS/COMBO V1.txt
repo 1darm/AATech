@@ -1,0 +1,155 @@
+Option Base 1
+
+Sub test2()
+Application.ScreenUpdating = True
+Application.EnableEvents = True
+Application.AskToUpdateLinks = True
+Application.DisplayAlerts = True
+Application.Calculation = xlAutomatic
+ThisWorkbook.Date1904 = False
+Application.StatusBar = False
+
+Dim benchmark As Double
+benchmark = Timer
+
+Dim modelCount, arrCount As Long
+Dim comboCount As Variant
+Dim partListCount As Variant
+Dim columnCount As Variant
+Dim searchOne, searchTwo, searchThree, searchFour, searchFive, searchSix, searchSeven As String
+Dim foundRow As Long
+Dim one, two, three, four, five, six, seven As Long
+Dim maxRow As Long
+Dim pcmrpArray() As Variant
+
+maxRow = Worksheets("PCMRP SEARCH").Cells(1, 11).Value
+comboCount = Worksheets("PCMRP SEARCH").UsedRange.Value
+partListCount = Worksheets("PART LIST").UsedRange.Value
+columnCount = Worksheets("PCMRP SEARCH").UsedRange.Columns.count
+modelCount = 0
+arrCount = 0
+
+ReDim pcmrpArray(maxRow - 1) As Variant
+
+For x = 1 To columnCount
+    If InStr(Worksheets("PART LIST").Cells(1, x).Value, "modelno") Then
+        modelCount = modelCount + 1
+    End If
+Next x
+
+ReDim arr(1 To modelCount) As Variant
+
+For y = 1 To columnCount
+    If InStr(Worksheets("PART LIST").Cells(1, y).Value, "modelno") Then
+        arrCount = arrCount + 1
+        arr(arrCount) = y
+    End If
+Next y
+
+For a = 1 To modelCount
+    Debug.Print arr(a)
+Next a
+
+For startRow = 2 To maxRow
+    searchOne = comboCount(startRow, 2)
+    searchTwo = comboCount(startRow, 3)
+    searchThree = comboCount(startRow, 4)
+    searchFour = comboCount(startRow, 5)
+    searchFive = comboCount(startRow, 6)
+    searchSix = comboCount(startRow, 7)
+    searchSeven = comboCount(startRow, 8)
+
+    foundRow = -1
+
+    For startRowTwo = 2 To UBound(partListCount)
+        Dim matchCount As Integer
+        matchCount = 0
+
+        For a = 1 To arrCount
+            If partListCount(startRowTwo, arr(a)) = searchOne Then
+                matchCount = matchCount + 1
+                one = a
+                Exit For
+            End If
+        Next a
+
+        For b = 1 To arrCount
+            If partListCount(startRowTwo, arr(b)) = searchTwo And Not (b = one) Then
+                matchCount = matchCount + 1
+                two = b
+                Exit For
+            End If
+        Next b
+
+        For c = 1 To arrCount
+            If partListCount(startRowTwo, arr(c)) = searchThree And Not ((c = one) Or (c = two)) Then
+                matchCount = matchCount + 1
+                three = c
+                Exit For
+            End If
+        Next c
+
+        For d = 1 To arrCount
+            If partListCount(startRowTwo, arr(d)) = searchFour And Not ((d = one) Or (d = two) Or (d = three)) Then
+                matchCount = matchCount + 1
+                four = d
+                Exit For
+            End If
+        Next d
+
+        For e = 1 To arrCount
+            If partListCount(startRowTwo, arr(e)) = searchFive And Not ((e = one) Or (e = two) Or (e = three) Or (e = four)) Then
+                matchCount = matchCount + 1
+                five = e
+                Exit For
+            End If
+        Next e
+
+        For f = 1 To arrCount
+            If partListCount(startRowTwo, arr(f)) = searchSix And Not ((f = one) Or (f = two) Or (f = three) Or (f = four) Or (f = five)) Then
+                matchCount = matchCount + 1
+                six = f
+                Exit For
+            End If
+        Next f
+
+        For g = 1 To arrCount
+            If partListCount(startRowTwo, arr(g)) = searchSeven And Not ((g = one) Or (g = two) Or (g = three) Or (g = four) Or (g = five) Or (g = six)) Then
+                matchCount = matchCount + 1
+                seven = g
+                Exit For
+            End If
+        Next g
+
+        If matchCount = 7 And (InStr(partListCount(startRowTwo, 2), "xDUP") = 0) And (InStr(partListCount(startRowTwo, 2), "xdup") = 0) And (InStr(partListCount(startRowTwo, 2), "BAD DUP") = 0) And (InStr(partListCount(startRowTwo, 2), "dup-x") = 0) And (InStr(partListCount(startRowTwo, 2), "dup") = 0) And (InStr(partListCount(startRowTwo, 2), "X DUP") = 0) Then
+            foundRow = startRowTwo
+            Exit For
+        End If
+    Next startRowTwo
+
+    If foundRow > 0 Then
+        pcmrpArray(startRow - 1) = partListCount(foundRow, 1)
+        'comboCount(startRow, 9) = partListCount(foundRow, 1)
+        'If (InStr(partListCount(foundRow, 2), "eol") > 0) Then
+        '    Worksheets("PCMRP SEARCH").Cells(startRow, 9).Font.Color = vbRed
+        'Else
+        '   Worksheets("PCMRP SEARCH").Cells(startRow, 9).Font.Color = vbBlack
+        'End If
+    Else
+        pcmrpArray(startRow - 1) = "N/A"
+        'comboCount(startRow, 9) = "N/A"
+    End If
+Next startRow
+
+Worksheets("PCMRP SEARCH").UsedRange.Value = comboCount
+
+Debug.Print Timer - benchmark
+
+Application.ScreenUpdating = False
+Application.EnableEvents = False
+Application.AskToUpdateLinks = False
+Application.DisplayAlerts = False
+Application.Calculation = xlAutomatic
+ThisWorkbook.Date1904 = False
+ActiveWindow.View = xlNormalView
+End Sub

@@ -1,0 +1,123 @@
+Sub CompareMacro()
+
+Dim benchmark As Double
+benchmark = Timer
+
+Application.ScreenUpdating = True
+Application.EnableEvents = True
+Application.AskToUpdateLinks = True
+Application.DisplayAlerts = True
+Application.Calculation = xlAutomatic
+ThisWorkbook.Date1904 = False
+Application.StatusBar = False
+    
+Dim searchArray() As Variant
+Dim count, countTwo, countThree, countFour As Long
+Dim modelArray() As Variant
+Dim modelNoOne() As Variant
+Dim modelNoTwo() As Variant
+Dim modelNoThree() As Variant
+Dim modelNoFour() As Variant
+Dim modelNoFive() As Variant
+Dim modelNoSix() As Variant
+Dim modelNoSeven() As Variant
+
+count = 1
+countTwo = 2
+countThree = 1
+countFour = 1
+
+While Not IsEmpty(Worksheets("COMPARE").Cells(countTwo, 1).Value2)
+    ReDim Preserve searchArray(count) As Variant
+    searchArray(count) = Worksheets("COMPARE").Cells(countTwo, 1).Value2
+    count = count + 1
+    countTwo = countTwo + 1
+Wend
+
+ReDim Preserve modelNoOne(count - 1) As Variant
+ReDim Preserve modelNoTwo(count - 1) As Variant
+ReDim Preserve modelNoThree(count - 1) As Variant
+ReDim Preserve modelNoFour(count - 1) As Variant
+ReDim Preserve modelNoFive(count - 1) As Variant
+ReDim Preserve modelNoSix(count - 1) As Variant
+ReDim Preserve modelNoSeven(count - 1) As Variant
+
+Dim modelNoArray(1 To 7) As Variant
+
+modelNoArray(1) = modelNoOne
+modelNoArray(2) = modelNoTwo
+modelNoArray(3) = modelNoThree
+modelNoArray(4) = modelNoFour
+modelNoArray(5) = modelNoFive
+modelNoArray(6) = modelNoSix
+modelNoArray(7) = modelNoSeven
+
+While Not IsEmpty(Worksheets("PART LIST").Cells(1, countThree).Value2)
+    If InStr(Worksheets("PART LIST").Cells(1, countThree).Value2, "modelno") Then
+        ReDim Preserve modelArray(countFour) As Variant
+        modelArray(countFour) = countThree
+        countFour = countFour + 1
+    End If
+    countThree = countThree + 1
+Wend
+
+
+Dim allModelCount As Long
+allModelCount = 1
+
+Dim allModelArrays() As Variant
+ReDim allModelArrays(countFour - 1) As Variant
+Dim pcmrpArray() As Variant
+ReDim pcmrpArray(Worksheets("PART LIST").UsedRange.Rows.count) As Variant
+
+For x = 1 To countFour - 1
+    Dim newArray() As Variant
+    For y = 2 To Worksheets("PART LIST").UsedRange.Rows.count
+        ReDim Preserve newArray(y - 1) As Variant
+        newArray(y - 1) = Worksheets("PART LIST").Cells(y, modelArray(x))
+    Next y
+    allModelArrays(allModelCount) = newArray
+    allModelCount = allModelCount + 1
+Next x
+
+For x = 1 To Worksheets("PART LIST").UsedRange.Rows.count - 1
+    pcmrpArray(x) = Worksheets("PART LIST").Cells(x, 1).Value2
+Next x
+
+Dim bool As Long
+bool = 1
+
+For o = 1 To 7
+    For x = 1 To count - 1
+        bool = -1
+        For y = 1 To Worksheets("PART LIST").UsedRange.Rows.count - 1
+             If allModelArrays(o)(y) = searchArray(x) Then
+                modelNoArray(o)(x) = pcmrpArray(y)
+                bool = 1
+             End If
+        Next y
+        If bool = -1 Then
+            modelNoArray(o)(x) = ""
+        End If
+    Next x
+Next o
+
+For o = 1 To 7
+    For x = 1 To count - 1
+        Worksheets("COMPARE").Cells(x + 1, o + 1) = modelNoArray(o)(x)
+    Next x
+Next o
+Application.ScreenUpdating = False
+Application.EnableEvents = False
+Application.AskToUpdateLinks = False
+Application.DisplayAlerts = False
+Application.Calculation = xlAutomatic
+ThisWorkbook.Date1904 = False
+ActiveWindow.View = xlNormalView
+
+Debug.Print Timer - benchmark
+
+End Sub
+
+
+

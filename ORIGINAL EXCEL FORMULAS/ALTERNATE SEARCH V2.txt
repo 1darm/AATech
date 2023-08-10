@@ -1,0 +1,144 @@
+Option Base 1
+Option Compare Text
+Sub Macro1()
+Application.ScreenUpdating = False
+Application.Calculation = xlManual
+Application.DisplayStatusBar = False
+Application.EnableEvents = False
+
+Dim partArray() As Variant
+Dim searchArray() As Variant
+Dim resultArray() As Variant
+Dim nameArray As Variant
+nameArray = Array(Worksheets("Capacitors"), Worksheets("Resistors"), Worksheets("Diodes"), Worksheets("ICs"), Worksheets("Transistors & MOSFET"), Worksheets("Inductors"), Worksheets("LEDs"), Worksheets("Varistors"), Worksheets("Mechanical"), Worksheets("Connectors"), Worksheets("Crystals"))
+Dim nameArrayTwo As Variant
+nameArrayTwo = Array(Worksheets("Wires"), Worksheets("Misc"))
+Dim capSize, x, searchCount, resultCount As Long
+Dim bool As Boolean
+
+searchCount = 2
+capSize = 4
+
+For y = 1 To 11
+    x = 6
+    While Not IsEmpty(nameArray(y).Cells(x, 7).Value2)
+        ReDim Preserve partArray(capSize) As Variant
+        If nameArray(y).Cells(x, 3).Value2 = "" Then
+            partArray(capSize - 3) = partArray(capSize - 7)
+            partArray(capSize - 2) = partArray(capSize - 6)
+            partArray(capSize - 1) = nameArray(y).Cells(x, 7).Value2
+            partArray(capSize) = nameArray(y).Cells(x, 8).Value2
+        Else
+            partArray(capSize - 3) = nameArray(y).Cells(x, 3).Value2
+            partArray(capSize - 2) = nameArray(y).Cells(x, 4).Value2
+            partArray(capSize - 1) = nameArray(y).Cells(x, 7).Value2
+            partArray(capSize) = nameArray(y).Cells(x, 8).Value2
+        End If
+        capSize = capSize + 4
+        x = x + 1
+    Wend
+Next y
+
+For y = 1 To 2
+    x = 5
+    While Not IsEmpty(nameArrayTwo(y).Cells(x, 7).Value2)
+        ReDim Preserve partArray(capSize) As Variant
+        If nameArrayTwo(y).Cells(x, 3).Value2 = "" Then
+            partArray(capSize - 3) = partArray(capSize - 7)
+            partArray(capSize - 2) = partArray(capSize - 6)
+            partArray(capSize - 1) = nameArray(y).Cells(x, 7).Value2
+            partArray(capSize) = nameArray(y).Cells(x, 8).Value2
+        Else
+            partArray(capSize - 3) = nameArrayTwo(y).Cells(x, 3).Value2
+            partArray(capSize - 2) = nameArrayTwo(y).Cells(x, 4).Value2
+            partArray(capSize - 1) = nameArrayTwo(y).Cells(x, 7).Value2
+            partArray(capSize) = nameArrayTwo(y).Cells(x, 8).Value2
+        End If
+        capSize = capSize + 4
+        x = x + 1
+    Wend
+Next y
+
+x = 2
+While Not IsEmpty(Sheets("SEARCH").Cells(x, 1))
+    ReDim Preserve searchArray(searchCount) As Variant
+    searchArray(searchCount - 1) = Sheets("SEARCH").Cells(x, 1)
+    searchArray(searchCount) = Sheets("SEARCH").Cells(x, 2)
+    searchCount = searchCount + 2
+    x = x + 1
+Wend
+
+'Debug.Print searchCount
+Dim x2, y2 As Long
+Dim bool2 As Boolean
+
+resultCount = 2
+For x = 1 To searchCount - 2 Step 2
+'    Debug.Print x
+    bool = False
+    bool2 = False
+    'Debug.Print x
+    Debug.Print searchArray(x)
+    For y = 1 To capSize - 4 Step 4
+        If Replace(partArray(y), " ", "") = Replace(searchArray(x), " ", "") And (Replace(partArray(y + 1), " ", "") = Replace(searchArray(x + 1), " ", "") Or InStr(Replace(partArray(y + 1), " ", ""), Replace(searchArray(x + 1), " ", "")) Or InStr(Replace(searchArray(x + 1), " ", ""), Replace(partArray(y + 1), " ", ""))) Then
+'        Debug.Print "err"
+            ReDim Preserve resultArray(resultCount) As Variant
+            resultArray(resultCount - 1) = partArray(y + 2)
+            resultArray(resultCount) = partArray(y + 3)
+            resultCount = resultCount + 2
+            If partArray(y) <> partArray(y + 4) Then
+                If x <> searchCount - 3 Then
+                    x = x + 2
+                    y = 1
+                End If
+                If searchCount = 4 Then
+                    Exit For
+                End If
+                resultCount = resultCount + 1
+                ReDim Preserve resultArray(resultCount) As Variant
+                'Debug.Print "SKIP DONE ALT"
+                resultArray(resultCount - 2) = "AAAAAAAAAAA"
+            End If
+        End If
+    Next
+    If bool = False Then
+'        Debug.Print "False"
+        resultCount = resultCount + 1
+        ReDim Preserve resultArray(resultCount) As Variant
+        'Debug.Print "EMPTY"
+        resultArray(resultCount - 2) = "AAAAAAAAAAA"
+    End If
+Next
+
+Dim col, row As Long
+col = 4
+row = 2
+
+For x = 1 To resultCount - 2
+    If resultArray(x) = "AAAAAAAAAAA" Then
+        row = row + 1
+        col = 4
+    Else
+        If Not IsEmpty(Worksheets("SEARCH").Cells(row, 1)) Then
+            Worksheets("SEARCH").Cells(row, col) = resultArray(x)
+            col = col + 1
+        End If
+    End If
+Next x
+
+
+
+
+'For x = 1 To searchCount - 2
+'    Debug.Print searchArray(x)
+'Next x
+
+
+Application.EnableEvents = True
+Application.DisplayStatusBar = True
+Application.Calculation = xlAutomatic
+Application.ScreenUpdating = True
+End Sub
+
+
+

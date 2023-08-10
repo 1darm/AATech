@@ -1,0 +1,14 @@
+For h = bomOneStart To bomOneEnd
+    For j = bomTwoStart To bomTwoEnd
+        If Worksheets("COMPAREONE").Cells(h, bomOneMFGPNNum).Value = Worksheets("COMPARETWO").Cells(j, bomTwoMFGPNNum).Value Then
+            If InStr(Worksheets("COMPAREONE").Cells(h, bomOneAltNum).Value, Worksheets("COMPARETWO").Cells(j, bomTwoAltOneNum).Value) Then
+                Debug.Print Worksheets("COMPAREONE").Cells(h, bomOneMFGPNNum).Value & " = " & Worksheets("COMPARETWO").Cells(j, bomTwoMFGPNNum).Value & " AAA " & Worksheets("COMPARETWO").Cells(j, bomTwoAltOneNum).Value
+            Else
+                If (Worksheets("COMPARETWO").Cells(j, bomTwoAltOneNum).Value <> "") Then
+                    Worksheets("COMPARETWO").Cells(j, bomTwoAltOneNum).Interior.Color = vbRed
+                End If
+            End If
+            
+        End If
+    Next j
+Next h
