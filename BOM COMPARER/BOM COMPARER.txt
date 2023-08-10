@@ -1,0 +1,195 @@
+Option Base 1
+Option Compare Text
+
+Sub Macro1()
+
+Dim count, countTwo, countThree, countFour As Long
+Dim searchOne, searchTwo, searchThree As String
+Dim currentOne, currentTwo, currentThree As String
+Dim bomOneStart, bomOneAltOne, bomOneRefCol, bomOneEnd As Long
+Dim bomTwoStart, bomTwoAltOne, bomTwoAltTwo, bomTwoAltThree, bomTwoAltFour, bomTwoRefCol, bomTwoEnd As Long
+Dim bomOneMFGPN, bomTwoMFGPN As Variant
+Dim bomOneMFGPNNum, bomTwoMFGPNNum As Long
+Dim bomTwoAltOneNum, bomTwoAltTwoNum, bomTwoAltThreeNum, bomTwoAltFourNum As Long
+Dim bomOneAltNum As Long
+Dim bomOneRefNum, bomTwoRefNum As Long
+Dim bomOneArray() As Variant
+Dim bomTwoArray() As Variant
+Dim bomOneArrayTwo() As Variant
+Dim bomTwoArrayTwo() As Variant
+Dim compareWrong() As Variant
+Dim alphabetArray() As Variant
+Dim alternateOne, alternateTwo, alternateThree() As String
+
+alphabetArray = Array("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z")
+
+bomOneStart = Worksheets("INPUTS").Cells(2, 2).Value
+bomOneAltOne = Worksheets("INPUTS").Cells(3, 2).Value
+bomOneRefCol = Worksheets("INPUTS").Cells(4, 2).Value
+bomOneMFGPN = Worksheets("INPUTS").Cells(5, 2).Value
+bomOneEnd = Worksheets("INPUTS").Cells(6, 2).Value
+
+bomTwoStart = Worksheets("INPUTS").Cells(2, 5).Value
+bomTwoAltOne = Worksheets("INPUTS").Cells(3, 5).Value
+bomTwoAltTwo = Worksheets("INPUTS").Cells(4, 5).Value
+bomTwoAltThree = Worksheets("INPUTS").Cells(5, 5).Value
+bomTwoAltFour = Worksheets("INPUTS").Cells(6, 5).Value
+bomTwoRefCol = Worksheets("INPUTS").Cells(7, 5).Value
+bomTwoMFGPN = Worksheets("INPUTS").Cells(8, 5).Value
+bomTwoEnd = Worksheets("INPUTS").Cells(9, 5).Value
+
+For P = 1 To 26
+    If alphabetArray(P) = bomOneMFGPN Then
+        bomOneMFGPNNum = P
+'        Debug.Print alphabetArray(P) & P
+    End If
+    If alphabetArray(P) = bomTwoMFGPN Then
+        bomTwoMFGPNNum = P
+'        Debug.Print alphabetArray(P) & P
+    End If
+    If alphabetArray(P) = bomTwoAltOne Then
+        bomTwoAltOneNum = P
+    End If
+    If alphabetArray(P) = bomTwoAltTwo Then
+        bomTwoAltTwoNum = P
+    End If
+    If alphabetArray(P) = bomTwoAltThree Then
+        bomTwoAltThreeNum = P
+    End If
+    If alphabetArray(P) = bomTwoAltFour Then
+        bomTwoAltFourNum = P
+    End If
+    If alphabetArray(P) = bomOneAltOne Then
+        bomOneAltNum = P
+    End If
+    If alphabetArray(P) = bomOneRefCol Then
+        bomOneRefNum = P
+    End If
+    If alphabetArray(P) = bomTwoRefCol Then
+        bomTwoRefNum = P
+    End If
+Next P
+
+count = 1
+
+For x = bomOneStart To bomOneEnd
+    If Worksheets("COMPAREONE").Cells(x, bomOneRefNum).Interior.Color <> vbRed Then
+        ReDim Preserve bomOneArray(count) As Variant
+        bomOneArray(count) = x
+        count = count + 1
+    End If
+Next x
+
+countTwo = 1
+
+For y = bomTwoStart To bomTwoEnd
+    If Worksheets("COMPARETWO").Cells(y, bomTwoRefNum).Interior.Color <> vbRed And Worksheets("COMPARETWO").Cells(y, bomTwoRefNum).Value <> "" Then
+         ReDim Preserve bomTwoArray(count) As Variant
+         bomTwoArray(countTwo) = y
+         countTwo = countTwo + 1
+    End If
+Next y
+
+
+Dim bool, boolOne, altOne, altTwo, altThree, altFour, one, two, three As Long
+bool = 1
+boolOne = 1
+altOne = 1
+altTwo = 1
+altThree = 1
+
+For y = 1 To count - 1
+    bool = -1
+    boolOne = 1
+    altOne = 1
+    altTwo = 1
+    altThree = 1
+    altFour = 1
+    one = -1
+    For j = 1 To countTwo - 1
+        If Worksheets("COMPAREONE").Cells(bomOneArray(y), bomOneRefNum).Value = Worksheets("COMPARETWO").Cells(bomTwoArray(j), bomTwoRefNum).Value Then
+            bool = j
+            one = bomTwoArray(j)
+        End If
+        If Worksheets("COMPAREONE").Cells(bomOneArray(y), bomOneMFGPNNum).Value = Worksheets("COMPARETWO").Cells(bomTwoArray(j), bomTwoMFGPNNum).Value And bool = j Then
+            boolOne = -1
+        End If
+        If Not IsEmpty(Worksheets("INPUTS").Cells(3, 5)) Then
+            If InStr(Worksheets("COMPAREONE").Cells(bomOneArray(y), bomOneAltNum).Value, Worksheets("COMPARETWO").Cells(bomTwoArray(j), bomTwoAltOneNum).Value) > 0 And bool = j Then
+                altOne = -1
+            End If
+        End If
+        If Not IsEmpty(Worksheets("INPUTS").Cells(4, 5)) Then
+            If InStr(Worksheets("COMPAREONE").Cells(bomOneArray(y), bomOneAltNum).Value, Worksheets("COMPARETWO").Cells(bomTwoArray(j), bomTwoAltTwoNum).Value) > 0 And bool = j Then
+                altTwo = -1
+            End If
+        End If
+        If Not IsEmpty(Worksheets("INPUTS").Cells(5, 5)) Then
+            If InStr(Worksheets("COMPAREONE").Cells(bomOneArray(y), bomOneAltNum).Value, Worksheets("COMPARETWO").Cells(bomTwoArray(j), bomTwoAltThreeNum).Value) > 0 And bool = j Then
+                altThree = -1
+            End If
+        End If
+        If Not IsEmpty(Worksheets("INPUTS").Cells(6, 5)) Then
+            If InStr(Worksheets("COMPAREONE").Cells(bomOneArray(y), bomOneAltNum).Value, Worksheets("COMPARETWO").Cells(bomTwoArray(j), bomTwoAltFourNum).Value) > 0 And bool = j Then
+                altFour = -1
+            End If
+        End If
+    Next j
+    If bool < 0 Then
+        Worksheets("COMPAREONE").Cells(bomOneArray(y), bomOneRefNum).Interior.Color = vbYellow
+        Worksheets("COMPAREONE").Cells(bomOneArray(y), bomOneAltNum).Interior.Color = vbYellow
+    End If
+    If boolOne = 1 Then
+        Worksheets("COMPAREONE").Cells(bomOneArray(y), bomOneMFGPNNum).Interior.Color = vbYellow
+    End If
+    'Debug.Print "----------------------------------------------------------------------"
+    If one > 0 And Not IsEmpty(Worksheets("INPUTS").Cells(3, 5)) Then
+        If altOne = 1 And IsEmpty(Worksheets("COMPARETWO").Cells(one, bomTwoAltOneNum)) <> True Then
+            Worksheets("COMPAREONE").Cells(bomOneArray(y), bomOneAltNum).Interior.Color = vbYellow
+            'Debug.Print "ALT ONE " & Worksheets("COMPAREONE").Cells(bomOneArray(y), bomOneRefNum).Value
+        End If
+    End If
+    If one > 0 And Not IsEmpty(Worksheets("INPUTS").Cells(4, 5)) Then
+        If altTwo = 1 And IsEmpty(Worksheets("COMPARETWO").Cells(one, bomTwoAltTwoNum)) <> True Then
+            Worksheets("COMPAREONE").Cells(bomOneArray(y), bomOneAltNum).Interior.Color = vbYellow
+            'Debug.Print "ALT TWO " & Worksheets("COMPAREONE").Cells(bomOneArray(y), bomOneRefNum).Value
+        End If
+    End If
+    If one > 0 And Not IsEmpty(Worksheets("INPUTS").Cells(5, 5)) Then
+        If altThree = 1 And IsEmpty(Worksheets("COMPARETWO").Cells(one, bomTwoAltThreeNum)) <> True Then
+            Worksheets("COMPAREONE").Cells(bomOneArray(y), bomOneAltNum).Interior.Color = vbYellow
+        ' Debug.Print "ALT THREE " & Worksheets("COMPAREONE").Cells(bomOneArray(y), bomOneRefNum).Value
+        End If
+    End If
+    If one > 0 And Not IsEmpty(Worksheets("INPUTS").Cells(6, 5)) Then
+        If altFour = 1 And IsEmpty(Worksheets("COMPARETWO").Cells(one, bomTwoAltFourNum)) <> True Then
+            Worksheets("COMPAREONE").Cells(bomOneArray(y), bomOneAltNum).Interior.Color = vbYellow
+        ' Debug.Print "ALT THREE " & Worksheets("COMPAREONE").Cells(bomOneArray(y), bomOneRefNum).Value
+        End If
+    End If
+    If one > 0 And Not IsEmpty(Worksheets("INPUTS").Cells(3, 5)) And Not IsEmpty(Worksheets("INPUTS").Cells(4, 5)) And Not IsEmpty(Worksheets("INPUTS").Cells(5, 5)) And Not IsEmpty(Worksheets("INPUTS").Cells(6, 5)) Then
+        If IsEmpty(Worksheets("COMPARETWO").Cells(one, bomTwoAltOneNum)) And IsEmpty(Worksheets("COMPARETWO").Cells(one, bomTwoAltThreeNum)) And IsEmpty(Worksheets("COMPARETWO").Cells(one, bomTwoAltTwoNum)) And IsEmpty(Worksheets("COMPARETWO").Cells(one, bomTwoAltFourNum)) And Not IsEmpty(Worksheets("COMPAREONE").Cells(bomOneArray(y), bomOneAltNum)) Then
+            Worksheets("COMPAREONE").Cells(bomOneArray(y), bomOneAltNum).Interior.Color = vbYellow
+        End If
+    End If
+    If one > 0 And Not IsEmpty(Worksheets("INPUTS").Cells(3, 5)) And Not IsEmpty(Worksheets("INPUTS").Cells(4, 5)) And Not IsEmpty(Worksheets("INPUTS").Cells(5, 5)) Then
+        If IsEmpty(Worksheets("COMPARETWO").Cells(one, bomTwoAltOneNum)) And IsEmpty(Worksheets("COMPARETWO").Cells(one, bomTwoAltThreeNum)) And IsEmpty(Worksheets("COMPARETWO").Cells(one, bomTwoAltTwoNum)) And Not IsEmpty(Worksheets("COMPAREONE").Cells(bomOneArray(y), bomOneAltNum)) Then
+            Worksheets("COMPAREONE").Cells(bomOneArray(y), bomOneAltNum).Interior.Color = vbYellow
+        End If
+    End If
+    If one > 0 And Not IsEmpty(Worksheets("INPUTS").Cells(3, 5)) And Not IsEmpty(Worksheets("INPUTS").Cells(4, 5)) Then
+        If IsEmpty(Worksheets("COMPARETWO").Cells(one, bomTwoAltOneNum)) And IsEmpty(Worksheets("COMPARETWO").Cells(one, bomTwoAltTwoNum)) And Not IsEmpty(Worksheets("COMPAREONE").Cells(bomOneArray(y), bomOneAltNum)) Then
+            Worksheets("COMPAREONE").Cells(bomOneArray(y), bomOneAltNum).Interior.Color = vbYellow
+        End If
+    End If
+    If one > 0 And Not IsEmpty(Worksheets("INPUTS").Cells(3, 5)) Then
+        If IsEmpty(Worksheets("COMPARETWO").Cells(one, bomTwoAltOneNum)) And Not IsEmpty(Worksheets("COMPAREONE").Cells(bomOneArray(y), bomOneAltNum)) Then
+            Worksheets("COMPAREONE").Cells(bomOneArray(y), bomOneAltNum).Interior.Color = vbYellow
+        End If
+    End If
+Next y
+
+Debug.Print InStr(Worksheets("COMPAREONE").Cells(10, 11).Value, "")
+Debug.Print Worksheets("COMPAREONE").Cells(10, 11).Value
+Debug.Print Worksheets("COMPARETWO").Cells(7, 9).Value
+End Sub
