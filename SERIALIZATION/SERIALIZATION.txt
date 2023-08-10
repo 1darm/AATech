@@ -1,0 +1,118 @@
+Sub RangeCreaTOr()
+'Fields
+Dim x, z, o As Integer
+
+'Intialize fields
+x = 1 'count going through each row
+z = Worksheets("SERIAL INFO").Cells(1, 2).Value + Worksheets("SERIAL INFO").Cells(2, 2).Value - 1 'Total amount of serial numbers
+o = 1 'column count
+
+'clears the serialization list of anything that was there before
+Worksheets("SERIALIZATION").Cells.ClearContents
+Worksheets("SERIALIZATION").Cells.Interior.Color = vbWhite
+    For i = Worksheets("SERIAL INFO").Cells(1, 2).Value To z
+            Worksheets("SERIALIZATION").Cells(x, o).Value = i
+            x = x + 1
+            If (x = 48) Then
+                o = o + 1
+                x = 1
+            End If
+    Next i
+End Sub
+
+
+Sub FindValues()
+Dim x, x2, y2, b, totalCells, startInt, vbaDumb As Integer
+Dim loopRow, loopColumn As Integer
+
+Dim coll As New Collection
+Dim str, serial As String
+
+serial = Worksheets("SERIAL INFO").Cells(3, 2).Value
+str = ""
+totalCells = Worksheets("SERIAL INFO").Cells(2, 2).Value
+startInt = Worksheets("SERIAL INFO").Cells(1, 2).Value
+b = 1
+x = 1
+x2 = 1
+y2 = 1
+loopRow = 1
+loopColumn = 1
+
+    'reset the sheet
+    For Each Cell In Worksheets("SERIALIZATION").UsedRange.Cells
+        Cell.Interior.Color = vbWhite
+    Next
+    
+    'keeps checking the column until nothing is there
+    While b > 0
+        If (IsEmpty(Worksheets("FOUND").Cells(x, 1))) Then
+            b = -1
+        Else
+        'makes sure they're not misinputting a number that wasn't in serialization
+            If (Worksheets("FOUND").Cells(x, 1) < startInt Or Worksheets("FOUND").Cells(x, 1) > totalCells + startInt - 1) Then
+                MsgBox ("A NUMBER THAT IS NOT IN SERIALIZATION WAS PUT IN FOUND : " & Worksheets("FOUND").Cells(x, 1))
+            End If
+            'highlights in serialization if found
+            If (Worksheets("FOUND").Cells(x, 1) >= startInt And Worksheets("FOUND").Cells(x, 1) < totalCells + startInt) Then
+                If (Worksheets("FOUND").Cells(x, 1).Value < startInt + 47) Then
+                    Worksheets("SERIALIZATION").Cells(Worksheets("FOUND").Cells(x, 1).Value - startInt + 1, 1).Interior.Color = vbRed
+                Else
+                    vbaDumb = Worksheets("FOUND").Cells(x, 1).Value - startInt + 1
+                    'conditions for when its at the last row
+                        If (vbaDumb Mod 47 = 0) Then
+                            Worksheets("SERIALIZATION").Cells(47, WorksheetFunction.RoundUp(vbaDumb / 47, 0)).Interior.Color = vbRed
+                        Else
+                            Worksheets("SERIALIZATION").Cells(vbaDumb Mod 47, WorksheetFunction.RoundUp(vbaDumb / 47, 0)).Interior.Color = vbRed
+                        End If
+                End If
+            End If
+        End If
+        x = x + 1
+    Wend
+    
+    'adds to collection if red, meaning it was found
+    For i = 0 To totalCells
+        If (Worksheets("SERIALIZATION").Cells(loopRow, loopColumn).Interior.Color = vbRed) Then
+            coll.Add Worksheets("SERIALIZATION").Cells(loopRow, loopColumn)
+        End If
+        
+        loopRow = loopRow + 1
+        If (loopRow = 48) Then
+            loopRow = 1
+            loopColumn = loopColumn + 1
+        End If
+    Next
+    
+    'condition for empty collection and only one
+    If (coll.Count = 0) Then
+         MsgBox ("NOTHING INPUT IN FOUND SHEET")
+    ElseIf (coll.Count = 1) Then
+            str = "S/N " & serial & coll(1)
+    Else
+        ' runs algorithm to actually concat the string together
+        str = "S/N " & serial & coll(1) & ", " & serial & coll(2)
+    
+        For i = 2 To coll.Count - 1
+            If (coll(i + 1) = coll(i) + 1) Then
+                If (i = coll.Count - 1) Then
+                    str = str & " TO " & serial & coll(i + 1)
+                End If
+            Else
+                str = str & " TO " & serial & coll(i) & ", " & serial & coll(i + 1)
+            End If
+        Next i
+        
+    End If
+    
+    'edits string so not duplicates like 123 TO 123
+    For i = 1 To coll.Count
+        If (InStr(str, (serial & coll(i) & " TO " & serial & coll(i))) > 0) Then
+            str = Replace(str, serial & coll(i) & " TO " & serial & coll(i), serial & coll(i))
+        End If
+    Next i
+    'outputs
+    Worksheets("SERIAL INFO").Cells(5, 2) = str
+    
+End Sub
+
