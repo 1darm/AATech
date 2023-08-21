@@ -1,0 +1,17 @@
+C:\Users\engineeringuser\source\repos\SERIALIZATION\SERIALIZATION\bin\Release\SERIALIZATION.exe.config
+C:\Users\engineeringuser\source\repos\SERIALIZATION\SERIALIZATION\bin\Release\SERIALIZATION.exe
+C:\Users\engineeringuser\source\repos\SERIALIZATION\SERIALIZATION\bin\Release\SERIALIZATION.pdb
+C:\Users\engineeringuser\source\repos\SERIALIZATION\SERIALIZATION\obj\Release\SERIALIZATION.csproj.AssemblyReference.cache
+C:\Users\engineeringuser\source\repos\SERIALIZATION\SERIALIZATION\obj\Release\SERIALIZATION.csproj.SuggestedBindingRedirects.cache
+C:\Users\engineeringuser\source\repos\SERIALIZATION\SERIALIZATION\obj\Release\SERIALIZATION.Properties.Resources.resources
+C:\Users\engineeringuser\source\repos\SERIALIZATION\SERIALIZATION\obj\Release\SERIALIZATION.csproj.GenerateResource.cache
+C:\Users\engineeringuser\source\repos\SERIALIZATION\SERIALIZATION\obj\Release\SERIALIZATION.csproj.CoreCompileInputs.cache
+C:\Users\engineeringuser\source\repos\SERIALIZATION\SERIALIZATION\obj\Release\SERIALIZATION.exe
+C:\Users\engineeringuser\source\repos\SERIALIZATION\SERIALIZATION\obj\Release\SERIALIZATION.pdb
+C:\Users\engineeringuser\source\repos\SERIALIZATION\SERIALIZATION\obj\Release\SERIALIZATION.AddTemplateForm.resources
+C:\Users\engineeringuser\source\repos\SERIALIZATION\SERIALIZATION\obj\Release\SERIALIZATION.LoginForm.resources
+C:\Users\engineeringuser\source\repos\SERIALIZATION\SERIALIZATION\obj\Release\SERIALIZATION.AddJobForm.resources
+C:\Users\engineeringuser\source\repos\SERIALIZATION\SERIALIZATION\obj\Release\SERIALIZATION.PartForm.resources
+C:\Users\engineeringuser\source\repos\SERIALIZATION\SERIALIZATION\obj\Release\SERIALIZATION.JobForm.resources
+C:\Users\engineeringuser\source\repos\SERIALIZATION\SERIALIZATION\obj\Release\SERIALIZATION.ShipInspectForm.resources
+C:\Users\engineeringuser\source\repos\SERIALIZATION\SERIALIZATION\obj\Release\SERIALIZATION.CreateSerial.resources
